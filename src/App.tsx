@@ -1,18 +1,21 @@
 import React from "react";
 import "./App.css";
-import { Tabs } from "antd";
+import { Tabs, Card } from "antd";
 import { Products } from "./components/Products";
+import { Packs } from "./components/Packs";
 
 function App() {
   return (
-    <Tabs>
-      <Tabs.TabPane tab="Produtos" key="1">
-        <Products />
-      </Tabs.TabPane>
-      <Tabs.TabPane tab="Pacotes" key="2">
-        Content of Tab Pane 2
-      </Tabs.TabPane>
-    </Tabs>
+    <Card title="Atualização de preços">
+      <Tabs>
+        <Tabs.TabPane tab="Tabela de Preços" key="1">
+          <Products />
+        </Tabs.TabPane>
+        <Tabs.TabPane tab="Pacotes" key="2">
+          <Packs />
+        </Tabs.TabPane>
+      </Tabs>
+    </Card>
   );
 }
 
