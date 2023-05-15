@@ -1,25 +1,25 @@
 import React from "react";
-import { Table, notification, Input } from "antd";
 import { Formik } from "formik";
 import useProducts from "../../hooks/useProducts";
-import { useFormikContext } from "formik";
 import ProductsTable from "./ProductsTable";
 
 export const Products = () => {
-  const { data: products } = useProducts();
-  const initialValues = products;
+  const { data: products = [], refetch } = useProducts();
+  console.log("test-products", products);
+  const initialValues = products || [];
   const handleSubmit = () => {
     console.log("submit");
+    refetch();
   };
 
   return (
     <Formik
-      initialValues={initialValues || {}}
+      initialValues={initialValues}
       onSubmit={handleSubmit}
-      enableReinitialize={true}
+      enableReinitialize
       pagination={false}
     >
-      {({ values, setFieldValue }) => {
+      {({ values, setFieldValue, handleSubmit, handleChange }) => {
         return <ProductsTable />;
       }}
     </Formik>
