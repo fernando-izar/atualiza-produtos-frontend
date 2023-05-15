@@ -8,10 +8,11 @@ import {
 } from "../../hooks/useProducts";
 import api from "../../services/api";
 
-const ProductsTable = () => {
+const ProductsTable: React.FC = () => {
   const [isValidated, setIsValidated] = useState(false);
-  const [brokenRules, setBrokenRules] = useState<IProductValidated[]>([]); // [
-  const { values, setFieldValue } = useFormikContext<IProduct[]>();
+  const [brokenRules, setBrokenRules] = useState<IProductValidated[]>([]);
+  const { values, setFieldValue, setValues, handleSubmit } =
+    useFormikContext<IProduct[]>();
   const columns = [
     {
       title: "Código",
@@ -38,6 +39,7 @@ const ProductsTable = () => {
       dataIndex: "new_sales_price",
       key: "new_sales_price",
       render: (value: number, obj: IProduct, index: number) => {
+        console.log("test-value", value, obj, index);
         return (
           <>
             <Tooltip
@@ -49,17 +51,19 @@ const ProductsTable = () => {
               color={brokenRules[index]?.is_validated ? "green" : "red"}
             >
               <Input
+                disabled={isValidated}
                 status={
                   brokenRules[index]?.is_validated === false ? "error" : ""
                 }
-                onBeforeInput={() => setFieldValue("new_sales_price", value)}
+                type={"number"}
                 value={value}
                 onChange={(e) => {
                   const newValue = e.target.value;
                   setFieldValue(`[${index}].new_sales_price`, +newValue);
                 }}
                 min={0}
-                placeholder="0.00"
+                step="0.01"
+                pattern="\d+(\.\d{1,2})?"
               ></Input>
             </Tooltip>
           </>
@@ -84,10 +88,30 @@ const ProductsTable = () => {
       notification.error({
         message: "Erro ao validar os preços",
       });
+    } finally {
     }
   };
 
-  const onUpdate = () => {};
+  const onUpdate = async () => {
+    try {
+      const { data } = await api<IProduct[]>({
+        url: "/product/update",
+        method: "PUT",
+        data: values,
+      });
+      setValues(data);
+      notification.success({
+        message: "Preços atualizados com sucesso",
+      });
+    } catch (error) {
+      notification.error({
+        message: "Erro ao atualizar os preços",
+      });
+    } finally {
+      setIsValidated(false);
+      handleSubmit();
+    }
+  };
 
   return (
     <>
@@ -95,7 +119,12 @@ const ProductsTable = () => {
         <Button type="primary" title="Validar" onClick={onValidate}>
           Validar
         </Button>
-        <Button type="primary" title="Atualizar Preços" disabled={!isValidated}>
+        <Button
+          type="primary"
+          title="Atualizar Preços"
+          disabled={!isValidated}
+          onClick={onUpdate}
+        >
           Atualizar Preços
         </Button>
       </Space>
