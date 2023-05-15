@@ -113,6 +113,65 @@ const ProductsTable: React.FC = () => {
     }
   };
 
+  const handleFileUpload = async (event: any) => {
+    try {
+      const file = event.target.files[0];
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const contents = e.target?.result;
+        let text: string;
+
+        if (typeof contents === "string") {
+          text = contents;
+        } else if (contents instanceof ArrayBuffer) {
+          const decoder = new TextDecoder();
+          text = decoder.decode(contents);
+        } else {
+          throw new Error("Invalid file type");
+        }
+
+        const rows = text.split("\n").slice(1);
+
+        const updatedValues = values.map((product: IProduct, index: number) => {
+          const row = rows[index];
+          const columns = row.split(",");
+          const salelPrice = parseFloat(columns[1]);
+
+          return {
+            ...product,
+            new_sales_price: salelPrice,
+          };
+        });
+
+        setValues(updatedValues);
+
+        notification.success({
+          message: "Tabela de preços carregada com sucesso",
+        });
+      };
+
+      reader.readAsArrayBuffer(file);
+    } catch (error) {
+      notification.error({
+        message: "Erro ao carregar a tabela de preços",
+      });
+    }
+  };
+
+  const uploadPrices = async () => {
+    try {
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = ".csv";
+      fileInput.addEventListener("change", handleFileUpload, false);
+      fileInput.click();
+    } catch (error) {
+      notification.error({
+        message: "Erro ao carregar a tabela de preços",
+      });
+    }
+  };
+
   return (
     <>
       <Space direction="horizontal" size={20}>
@@ -126,6 +185,14 @@ const ProductsTable: React.FC = () => {
           onClick={onUpdate}
         >
           Atualizar Preços
+        </Button>
+        <Button
+          type="primary"
+          title="Carregar Tabela de Preços"
+          onClick={uploadPrices}
+          disabled={isValidated}
+        >
+          Carregar Tabela de Preços
         </Button>
       </Space>
       <Table dataSource={values} columns={columns} pagination={false}></Table>
