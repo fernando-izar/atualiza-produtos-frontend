@@ -39,7 +39,6 @@ const ProductsTable: React.FC = () => {
       dataIndex: "new_sales_price",
       key: "new_sales_price",
       render: (value: number, obj: IProduct, index: number) => {
-        console.log("test-value", value, obj, index);
         return (
           <>
             <Tooltip
