@@ -87,7 +87,6 @@ const ProductsTable: React.FC = () => {
       notification.error({
         message: "Erro ao validar os preços",
       });
-    } finally {
     }
   };
 
@@ -141,19 +140,6 @@ const ProductsTable: React.FC = () => {
             setFieldValue(`[${productId}].new_sales_price`, +newSalesPrice);
           }
         });
-
-        // const updatedValues = values.map((product: IProduct, index: number) => {
-        //   rows.map((row, index) => row[index].split(","));
-        //   const row = rows[index];
-        //   const columns = row.split(",");
-        //   const salelPrice = parseFloat(columns[1]);
-
-        //   return {
-        //     ...product,
-        //     new_sales_price: salelPrice,
-        //   };
-        // });
-        // setValues(updatedValues);
 
         notification.success({
           message: "Tabela de preços carregada com sucesso",
