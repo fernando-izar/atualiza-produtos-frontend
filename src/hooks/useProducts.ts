@@ -4,7 +4,7 @@ import { notification } from "antd";
 import api from "../services/api";
 
 export interface IProduct {
-  id: number;
+  code: number;
   name: string;
   cost_price: number;
   sales_price: number;

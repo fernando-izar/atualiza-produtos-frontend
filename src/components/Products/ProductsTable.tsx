@@ -131,18 +131,29 @@ const ProductsTable: React.FC = () => {
 
         const rows = text.split("\n").slice(1);
 
-        const updatedValues = values.map((product: IProduct, index: number) => {
-          const row = rows[index];
-          const columns = row.split(",");
-          const salelPrice = parseFloat(columns[1]);
-
-          return {
-            ...product,
-            new_sales_price: salelPrice,
-          };
+        rows.forEach((row) => {
+          const productId = values.findIndex((product) => {
+            const code = +row.split(",")[0];
+            return product.code === code;
+          });
+          if (productId !== -1) {
+            const newSalesPrice = +row.split(",")[1];
+            setFieldValue(`[${productId}].new_sales_price`, +newSalesPrice);
+          }
         });
 
-        setValues(updatedValues);
+        // const updatedValues = values.map((product: IProduct, index: number) => {
+        //   rows.map((row, index) => row[index].split(","));
+        //   const row = rows[index];
+        //   const columns = row.split(",");
+        //   const salelPrice = parseFloat(columns[1]);
+
+        //   return {
+        //     ...product,
+        //     new_sales_price: salelPrice,
+        //   };
+        // });
+        // setValues(updatedValues);
 
         notification.success({
           message: "Tabela de preços carregada com sucesso",
