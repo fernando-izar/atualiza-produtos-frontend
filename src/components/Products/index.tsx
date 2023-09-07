@@ -5,10 +5,8 @@ import ProductsTable from "./ProductsTable";
 
 export const Products = () => {
   const { data: products = [], refetch } = useProducts();
-  console.log("test-products", products);
   const initialValues = products || [];
   const handleSubmit = () => {
-    console.log("submit");
     refetch();
   };
 

@@ -39,7 +39,6 @@ const ProductsTable: React.FC = () => {
       dataIndex: "new_sales_price",
       key: "new_sales_price",
       render: (value: number, obj: IProduct, index: number) => {
-        console.log("test-value", value, obj, index);
         return (
           <>
             <Tooltip
@@ -88,7 +87,6 @@ const ProductsTable: React.FC = () => {
       notification.error({
         message: "Erro ao validar os preços",
       });
-    } finally {
     }
   };
 
@@ -132,18 +130,16 @@ const ProductsTable: React.FC = () => {
 
         const rows = text.split("\n").slice(1);
 
-        const updatedValues = values.map((product: IProduct, index: number) => {
-          const row = rows[index];
-          const columns = row.split(",");
-          const salelPrice = parseFloat(columns[1]);
-
-          return {
-            ...product,
-            new_sales_price: salelPrice,
-          };
+        rows.forEach((row) => {
+          const productId = values.findIndex((product) => {
+            const code = +row.split(",")[0];
+            return product.code === code;
+          });
+          if (productId !== -1) {
+            const newSalesPrice = +row.split(",")[1];
+            setFieldValue(`[${productId}].new_sales_price`, +newSalesPrice);
+          }
         });
-
-        setValues(updatedValues);
 
         notification.success({
           message: "Tabela de preços carregada com sucesso",
